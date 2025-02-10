@@ -1,4 +1,5 @@
 const c = (e) => document.querySelector(e);
+const cs = (e) => document.querySelectorAll(e);
 
 pizzaJson.map((item, index) => {
     let pizzaItem = c('.models .pizza-item').cloneNode(true);
