@@ -107,7 +107,11 @@ c('.pizzaInfo--addButton').addEventListener('click', () => {
 
 // Eventos do carrinho
 const updateCart = () => {
-    let totalPrice = 0;
+    let subtotal = 0;
+    let discount = 0;
+    let total = 0;
+
+    c('.menu-openner span').innerHTML = cart.length;
 
     if(cart.length > 0){
         c('aside').classList.add('show');
@@ -115,6 +119,9 @@ const updateCart = () => {
 
         for(let i in cart){
             let pizzaItem = pizzaJson.find((item) => item.id === cart[i].id);
+
+            subtotal += pizzaItem.price * cart[i].qt;
+
             let cartItem = c('.models .cart--item').cloneNode(true);
 
             cartItem.querySelector('img').src = pizzaItem.img;
@@ -123,33 +130,33 @@ const updateCart = () => {
 
             cartItem.querySelector('.cart--item-qtmenos').addEventListener('click', () => {
                 if(cart[i].qt === 1){
-                    return;
-                }
+                    cart.splice(i, 1);
+                }   
                 else {
                     cart[i].qt--;
                 }
                 
-                cartItem.querySelector('.cart--item--qtarea .cart--item--qt').innerHTML = cart[i].qt;
+                updateCart();
             });
 
             cartItem.querySelector('.cart--item-qtmais').addEventListener('click', () => {
                 cart[i].qt++;
-                cartItem.querySelector('.cart--item--qtarea .cart--item--qt').innerHTML = cart[i].qt;
-            });
-
-            totalPrice += pizzaItem.price;
+                updateCart();
+            });;
 
             c('.cart').append(cartItem);
-
-            c('.cart--area .cart--details .cart--totalitem subtotal').querySelector('span').innerHTML = totalPrice;
         }
 
-        
+        discount = subtotal * 0.1;
+        total = subtotal - discount;
 
-    
-       
+        c('.subtotal span:last-child').innerHTML = `R$ ${subtotal.toFixed(2)}`;
+        c('.desconto span:last-child').innerHTML = `R$ ${discount.toFixed(2)}`;
+        c('.big span:last-child').innerHTML = `R$ ${total.toFixed(2)}`;
+
     }else {
         c('aside').classList.remove('show');
+        c('aside').style.left = '100vw';
     }
 }
 
@@ -164,3 +171,8 @@ const sizeIdentifer = (size) => {
     }
 }
 
+c('.menu-openner').addEventListener('click', () => 
+    cart.length > 0 ? c('aside').style.left = '0' : null);
+
+c('.menu-closer').addEventListener('click', () => 
+    c('aside').style.left = '100vw');
